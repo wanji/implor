@@ -1,0 +1,40 @@
+#!/bin/bash
+
+BASEDIR=$(dirname $0)
+
+if [ $# -eq 1 ]; then
+    port=$1
+    wkdir=`pwd`
+elif [ $# -eq 2 ]; then
+    port=$1
+    wkdir=$2
+else
+    echo "Usage: $0 port [working_dir]"
+    exit 1
+fi
+
+cd $wkdir
+
+if [ ! -d static ]; then
+  mkdir -p static
+fi
+
+if [ ! -f _implor.py ]; then
+    ln -sv $BASEDIR/implor.py _implor.py
+fi
+
+export FLASK_DEBUG=1
+export FLASK_APP=_implor.py
+
+dnsdomainname=`dnsdomainname`
+hostname=`hostname`
+if [[ $dnsdomainname == "" ]] || [[ $(echo $hostname | grep $dnsdomainname$) != "" ]]; then
+    url=$hostname
+else
+    url=$hostname.$dnsdomainname
+fi
+
+echo -e "Put your folder (e.g. 'ep1') under $wkdir/static, then access it via: "
+echo -e "\thttp://$url:$port/ep1?s=0&n=6&w=480"
+
+flask run --host=0.0.0.0 --port=$port

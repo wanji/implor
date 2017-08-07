@@ -66,20 +66,26 @@ def gen_img_html(name, img_names, start, num, width=0, height=0):
     return html
 
 
-@app.route('/', methods=['GET'])
-@app.route('/<name>', methods=['GET'])
-def image_viewer(name=None):
-    if name == 'favicon.ico':
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def image_viewer(path=None):
+    if path == 'favicon.ico':
         return ""
 
-    img_dir = os.path.join(os.getcwd(), "static", "" if name is None else name)
+    img_dir = os.path.join(os.getcwd(), "static", "" if path is None else path)
     img_names = sorted([img_name for img_name in os.listdir(img_dir)
                         if img_name.split(".")[-1].lower()
                         in ['jpg', 'png', 'jpeg']])
+    if len(img_names) == 0:
+        list_html = ""
+        for d in os.listdir(img_dir):
+            href = "/".join([path, d]) if path != "" else d
+            list_html += "<a href='/{}'>{}</a><br>".format(href, d)
+        return list_html
 
     start = int(request.args.get('s', '0'))
     num = int(request.args.get('n', '1'))
     width = int(request.args.get('w', '0'))
     height = int(request.args.get('h', '0'))
 
-    return gen_img_html(name, img_names, start, num, width=width, height=height)
+    return gen_img_html(path, img_names, start, num, width=width, height=height)

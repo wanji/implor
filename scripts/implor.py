@@ -19,7 +19,14 @@ def gen_img_html(name, img_names, start, num, width=0, height=0):
     has_prev = start > 0
     has_next = start + num < num_images
 
-    html = ""
+    html = """
+    <style>
+        div.img_holder figure
+        {
+            float: left;
+        }
+    </style>
+    """
 
     size_params = ""
     size_params += "&h={}".format(height) if height > 0 else ""
@@ -58,28 +65,38 @@ def gen_img_html(name, img_names, start, num, width=0, height=0):
             "height={}".format(height) if height > 0 else "",
             "width={}".format(width) if width > 0 else "")
         if has_next:
-            html += "<a href='{}'>{}</a>".format(next_href, img_html)
-        else:
-            html += img_html
-    html += "<hr />"
-    html += head_html
+            img_html = "<a href='{}'>{}</a>".format(next_href, img_html)
+        img_html = """
+        <div class='img_holder'>
+            <figure>{}<figcaption>{}</figcaption></figure>
+        </div>""".format(
+            img_html, img_name)
+        html += img_html
+    # html += "<hr />"
+    # html += head_html
     return html
 
 
-@app.route('/', methods=['GET'])
-@app.route('/<name>', methods=['GET'])
-def image_viewer(name=None):
-    if name == 'favicon.ico':
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def image_viewer(path=None):
+    if path == 'favicon.ico':
         return ""
 
-    img_dir = os.path.join(os.getcwd(), "static", "" if name is None else name)
+    img_dir = os.path.join(os.getcwd(), "static", "" if path is None else path)
     img_names = sorted([img_name for img_name in os.listdir(img_dir)
                         if img_name.split(".")[-1].lower()
                         in ['jpg', 'png', 'jpeg']])
+    if len(img_names) == 0:
+        list_html = ""
+        for d in os.listdir(img_dir):
+            href = "/".join([path, d]) if path != "" else d
+            list_html += "<a href='/{}'>{}</a><br>".format(href, d)
+        return list_html
 
     start = int(request.args.get('s', '0'))
     num = int(request.args.get('n', '1'))
     width = int(request.args.get('w', '0'))
     height = int(request.args.get('h', '0'))
 
-    return gen_img_html(name, img_names, start, num, width=width, height=height)
+    return gen_img_html(path, img_names, start, num, width=width, height=height)

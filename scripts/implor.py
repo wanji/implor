@@ -60,17 +60,20 @@ def gen_img_html(name, img_names, start, num, width=0, height=0):
     html += "<hr />"
 
     for img_id, img_name in enumerate(img_names[start:start+num]):
-        img_html = "<img src='/static/{}/{}' title='{}' {} {} />\n".format(
-            name, img_name, img_name,
+        img_url = "/static/{}/{}".format(name, img_name)
+        img_html = "<img src='{}' title='{}' {} {} />\n".format(
+            img_url, img_name,
             "height={}".format(height) if height > 0 else "",
             "width={}".format(width) if width > 0 else "")
+        cap_html = "<a href='{}'><figcaption>{}</figcaption></a>".format(
+            img_url, img_name)
         if has_next:
             img_html = "<a href='{}'>{}</a>".format(next_href, img_html)
         img_html = """
         <div class='img_holder'>
-            <figure>{}<figcaption>{}</figcaption></figure>
+            <figure>{}{}</figure>
         </div>""".format(
-            img_html, img_name)
+            img_html, cap_html)
         html += img_html
     # html += "<hr />"
     # html += head_html

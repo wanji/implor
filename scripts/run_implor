@@ -37,4 +37,5 @@ fi
 echo -e "Put your folder (e.g. 'ep1') under $wkdir/static, then access it via: "
 echo -e "\thttp://$url:$port/ep1?s=0&n=6&w=480"
 
-flask run --host=0.0.0.0 --port=$port
+# flask run --host=0.0.0.0 --port=$port
+python _implor.py 0.0.0.0 $port

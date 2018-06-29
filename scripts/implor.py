@@ -8,6 +8,7 @@
  Description:
 """
 import os
+import sys
 from flask import Flask, request    # , redirect
 
 
@@ -103,3 +104,6 @@ def image_viewer(path=None):
     height = int(request.args.get('h', '0'))
 
     return gen_img_html(path, img_names, start, num, width=width, height=height)
+
+if __name__ == "__main__":
+    app.run(host=sys.argv[1], port=int(sys.argv[2]))

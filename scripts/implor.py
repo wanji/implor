@@ -105,5 +105,12 @@ def image_viewer(path=None):
 
     return gen_img_html(path, img_names, start, num, width=width, height=height)
 
+
+@app.after_request
+def add_header(response):
+    response.cache_control.max_age = 0
+    return response
+
+
 if __name__ == "__main__":
     app.run(host=sys.argv[1], port=int(sys.argv[2]))

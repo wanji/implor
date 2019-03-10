@@ -27,7 +27,7 @@ except ImportError:
             return fp.read()
 
 setup(name='implor',
-      version='0.3.2',
+      version='0.3.3',
       author='WAN Ji',
       author_email='wanji@live.com',
 

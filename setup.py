@@ -14,20 +14,8 @@ try:
 except ImportError:
     from distutils.core import setup
 
-try:
-    from pypandoc import convert
-
-    def read_md(fpath):
-        return convert(fpath, 'rst')
-except ImportError:
-    print("warning: pypandoc module not found, DONOT convert Markdown to RST")
-
-    def read_md(fpath):
-        with open(fpath, 'r') as fp:
-            return fp.read()
-
 setup(name='implor',
-      version='0.3.3',
+      version='0.4.2',
       author='WAN Ji',
       author_email='wanji@live.com',
 
@@ -35,9 +23,11 @@ setup(name='implor',
           'scripts/implor.py',
           'scripts/run_implor',
       ],
-      url='http://wanji.me/implor',
+      url='http://github.com/wanji/implor',
       license='LICENSE',
       description='Image Explorer',
+      long_description=open('README.md').read(),
+      long_description_content_type="text/markdown",
 
       install_requires=[
           "flask",

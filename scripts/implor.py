@@ -61,7 +61,7 @@ def gen_img_html(name, img_names, start, num, width=0, height=0):
     html += "<hr />"
 
     for img_id, img_name in enumerate(img_names[start:start+num]):
-        img_url = "/static/{}/{}".format(name, img_name)
+        img_url = "/static/{}/{}".format(name, img_name).replace("//", "/")
         img_html = "<img src='{}' title='{}' {} {} />\n".format(
             img_url, img_name,
             "height={}".format(height) if height > 0 else "",
@@ -87,7 +87,7 @@ def image_viewer(path=None):
     if path == 'favicon.ico':
         return ""
 
-    img_dir = os.path.join(os.getcwd(), "static", "" if path is None else path)
+    img_dir = os.path.join(app.static_folder, "" if path is None else path)
     img_names = sorted([img_name for img_name in os.listdir(img_dir)
                         if img_name.split(".")[-1].lower()
                         in ['jpg', 'png', 'jpeg']])
@@ -113,4 +113,15 @@ def add_header(response):
 
 
 if __name__ == "__main__":
+    root_path, static_folder = os.path.split(sys.argv[3])
+    if len(static_folder) == 0:
+        root_path, static_folder = os.path.split(root_path)
+
+    app.root_path = root_path
+    app.static_url_path = '/{}'.format(static_folder)
+    app.static_folder = app.root_path + app.static_url_path
+    print("      root_path", app.root_path)
+    print("static_url_path", app.static_url_path)
+    print("  static_folder", app.static_folder)
+
     app.run(host=sys.argv[1], port=int(sys.argv[2]))
